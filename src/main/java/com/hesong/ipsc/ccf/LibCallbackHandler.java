@@ -99,7 +99,7 @@ class LibCallbackHandler implements Callbacks {
                 }
                 String rpcTxt = data;
                 commander.executor.execute(() -> {
-                    commander.logger.debug(">>> commander<{}> executor.execute()", commander);
+                    commander.logger.debug(">>> commander<{}> executor.execute data: {}", commander, rpcTxt);
                     try {
                         RpcRequest req = null;
                         RpcResponse res = null;
@@ -117,6 +117,8 @@ class LibCallbackHandler implements Callbacks {
                                 commander.logger.debug("<<< commander.eventListener.onEvent()");
                                 return;
                             }
+                        } else {
+                            commander.logger.debug("commander<{}> executor.execute NO eventListener", commander);
                         }
                         // 收到了RPC调用回复？
                         try {
