@@ -13,15 +13,23 @@ import org.slf4j.LoggerFactory;
  * Commander Client {@code type} 一律是 {@code 10}; Monitor Client {@code type} 一律是 {@code 3}.
  */
 public class Client {
+    Logger logger;
+    byte connectingUnitId;
+    boolean connected;
+    private byte unitId;
+    private byte id;
+    private byte type;
+    private String ip;
+    private short port;
+
     /**
      * @param unitId 所属的本地Unit节点的ID
      * @param id     客户端ID
      * @param type   客户端 type
      * @param ip     要连接的 CTI BUS 服务器 IP
      * @param port   要连接的 CTI BUS 服务器端口
-     * @throws InterruptedException 启动期间程序被中断
      */
-    Client(byte unitId, byte id, byte type, String ip, short port) throws InterruptedException {
+    Client(byte unitId, byte id, byte type, String ip, short port) {
         this.logger = LoggerFactory.getLogger(Client.class);
         this.unitId = unitId;
         this.connectingUnitId = -1;
@@ -39,15 +47,6 @@ public class Client {
             );
         }
     }
-
-    Logger logger;
-    private byte unitId;
-    byte connectingUnitId;
-    boolean connected;
-    private byte id;
-    private byte type;
-    private String ip;
-    private short port;
 
     /**
      * @return 该客户端所述的本地 BUS UNIT 的 ID，即 {@link Unit#getLocalUnitId} 属性

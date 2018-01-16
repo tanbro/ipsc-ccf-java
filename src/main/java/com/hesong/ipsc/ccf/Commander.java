@@ -1,5 +1,8 @@
 package com.hesong.ipsc.ccf;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.LoggerFactory;
+
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -8,15 +11,16 @@ import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.LoggerFactory;
-
 /**
  * CTI BUS 命令处理器
  * <p>
  * Created by tanbr on 2016/8/15.
  */
 public class Commander extends Client {
+    RpcEventListener eventListener;
+    ThreadPoolExecutor executor;
+    private Monitor monitor;
+
     /**
      * @param unitId        所属的本地Unit节点的ID
      * @param id            客户端ID
@@ -24,9 +28,8 @@ public class Commander extends Client {
      * @param port          要连接的 CTI BUS 服务器端口
      * @param eventListener RPC事件监听器
      * @param executor      RPC事件和回复处理的执行器
-     * @throws InterruptedException 启动期间程序被中断
      */
-    Commander(byte unitId, byte id, String ip, short port, RpcEventListener eventListener, ThreadPoolExecutor executor) throws InterruptedException {
+    Commander(byte unitId, byte id, String ip, short port, RpcEventListener eventListener, ThreadPoolExecutor executor) {
         super(unitId, id, (byte) 10, ip, port);
         monitor = null;
         this.logger = LoggerFactory.getLogger(Commander.class);
@@ -34,10 +37,6 @@ public class Commander extends Client {
         this.executor = executor;
         this.executor.prestartAllCoreThreads();
     }
-
-    RpcEventListener eventListener;
-    ThreadPoolExecutor executor;
-    private Monitor monitor;
 
     /**
      * 在指定的CTI服务(IPSC)节点上新建一个 CTI 资源

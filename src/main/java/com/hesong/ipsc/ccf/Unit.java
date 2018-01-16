@@ -1,10 +1,10 @@
 package com.hesong.ipsc.ccf;
 
-import java.util.Map;
-import java.util.concurrent.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * CTI BUS 单元
@@ -14,6 +14,13 @@ import org.slf4j.LoggerFactory;
  * 一个进程只用使用一个 {@link Unit}
  */
 public class Unit {
+    static final Map<Byte, Client> clients = new ConcurrentHashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(Unit.class);
+    private static final Map<String, RpcResultListener> rpcResultMap = new ConcurrentHashMap<>();
+    static UnitCallbacks callbacks;
+    private static Byte localUnitId;
+    private static ScheduledThreadPoolExecutor rpcResultTimer;
+
     /**
      * 初始化 JNI 库
      * <p>
@@ -81,20 +88,12 @@ public class Unit {
         logger.warn("<<< release()");
     }
 
-    private static Byte localUnitId;
-    static UnitCallbacks callbacks;
-
     /**
      * @return 该命令处理器的 CTI BUS 单元ID (Unit Id)
      */
     public static Byte getLocalUnitId() {
         return localUnitId;
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(Unit.class);
-    static final Map<Byte, Client> clients = new ConcurrentHashMap<>();
-    private static final Map<String, RpcResultListener> rpcResultMap = new ConcurrentHashMap<>();
-    private static ScheduledThreadPoolExecutor rpcResultTimer;
 
     static void pushRpcResultListener(final RpcResultListener rpcResultListener) {
         logger.debug(">>> pushRpcResultListener(id={})", rpcResultListener.getId());
@@ -148,10 +147,9 @@ public class Unit {
      * @param eventListener 该客户端的事件监听器
      * @param executor      该客户端内部的ThreadPoolExecutor，用于处理异步的消息返回。如果为 {@code null} 就收不到事件。
      * @return 新建的客户端对象
-     * @throws InterruptedException 程序结束?
      */
     public static Commander createCommander(byte localClientId, String ip, short port,
-                                            RpcEventListener eventListener, ThreadPoolExecutor executor) throws InterruptedException {
+                                            RpcEventListener eventListener, ThreadPoolExecutor executor) {
         logger.info(
                 ">>> createCommander(localClientId={}, ip={}, port={}, eventListener={}, executor={})",
                 localClientId, ip, port, eventListener, executor
@@ -177,9 +175,8 @@ public class Unit {
      * @param port          BUS服务器端口
      * @param eventListener 该客户端的事件监听器。如果为 {@code null} 就收不到事件。
      * @return 新建的客户端对象
-     * @throws InterruptedException 程序结束?
      */
-    public static Commander createCommander(byte localClientId, String ip, short port, RpcEventListener eventListener) throws InterruptedException {
+    public static Commander createCommander(byte localClientId, String ip, short port, RpcEventListener eventListener) {
         return createCommander(localClientId, ip, port, eventListener, null);
     }
 
@@ -197,9 +194,8 @@ public class Unit {
      * @param ip            BUS服务器IP地址
      * @param eventListener 该客户端的事件监听器。如果为 {@code null} 就收不到事件。
      * @return 新建的客户端对象
-     * @throws InterruptedException 程序结束?
      */
-    public static Commander createCommander(byte localClientId, String ip, RpcEventListener eventListener) throws InterruptedException {
+    public static Commander createCommander(byte localClientId, String ip, RpcEventListener eventListener) {
         return createCommander(localClientId, ip, (short) 8088, eventListener);
     }
 
@@ -216,9 +212,8 @@ public class Unit {
      * @param commandEventListener {@link Commander}客户端的事件监听器
      * @param monitorEventListener {@link Monitor}客户端的事件监听器
      * @return 新建的 {@link Commander} 客户端对象
-     * @throws InterruptedException 程序结束?
      */
-    public static Commander createCommander(byte localClientId, String ip, RpcEventListener commandEventListener, MonitorEventListener monitorEventListener) throws InterruptedException {
+    public static Commander createCommander(byte localClientId, String ip, RpcEventListener commandEventListener, MonitorEventListener monitorEventListener) {
         Commander command = createCommander(localClientId, ip, commandEventListener);
         Monitor monitor = createMonitor((byte) (localClientId + 1), ip, monitorEventListener);
         command.setMonitor(monitor);
@@ -234,9 +229,8 @@ public class Unit {
      * @param eventListener 事件监听器。如果为 {@code null} 就收不到事件。
      * @param executor      该客户端内部的ThreadPoolExecutor，用于处理异步的消息返回。如果为 {@code null} 就收不到事件。
      * @return 新建的客户端对象
-     * @throws InterruptedException 程序结束?
      */
-    public static Monitor createMonitor(byte localClientId, String ip, short port, MonitorEventListener eventListener, ThreadPoolExecutor executor) throws InterruptedException {
+    public static Monitor createMonitor(byte localClientId, String ip, short port, MonitorEventListener eventListener, ThreadPoolExecutor executor) {
         logger.info(
                 ">>> createMonitor(localClientId={}, ip={}, port={})",
                 localClientId, ip, port
@@ -261,9 +255,8 @@ public class Unit {
      * @param ip            BUS服务器IP地址
      * @param eventListener 事件监听器。如果为 {@code null} 就收不到事件。
      * @return 新建的客户端对象
-     * @throws InterruptedException 程序结束?
      */
-    public static Monitor createMonitor(byte localClientId, String ip, MonitorEventListener eventListener) throws InterruptedException {
+    public static Monitor createMonitor(byte localClientId, String ip, MonitorEventListener eventListener) {
         return createMonitor(localClientId, ip, (short) 8088, eventListener, null);
     }
 }

@@ -4,8 +4,8 @@ package com.hesong.ipsc.ccf;
  * 单元级别事件回调接口
  *
  * @author tanbr
- *         <p>
- *         这个接口类中的回调方法在执行期间会阻塞底层共享库的IO，应<strong>尽快</strong>从方法返回！
+ * <p>
+ * 这个接口类中的回调方法在执行期间会阻塞底层共享库的IO，应<strong>尽快</strong>从方法返回！
  */
 public interface UnitCallbacks {
     /**

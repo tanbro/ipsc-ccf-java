@@ -8,14 +8,14 @@ import java.util.Map;
  * Created by liuxy on 16-7-13.
  */
 public class RpcRequest {
+    private String id = null;
+    private String method;
+    private Map<String, Object> params = null;
+
     @Override
     public String toString() {
         return String.format("<%s id=%s, method=%s, params=%s>", RpcResponse.class, this.id, this.method, this.params);
     }
-
-    private String id = null;
-    private String method;
-    private Map<String, Object> params = null;
 
     /**
      * @return RPC请求ID。RPC事件的 id 参数总是 null

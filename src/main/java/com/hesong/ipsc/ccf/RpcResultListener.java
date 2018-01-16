@@ -12,13 +12,12 @@ import java.util.concurrent.ScheduledFuture;
  * Created by liuxy on 16-7-12.
  */
 public abstract class RpcResultListener {
-    private String id;
-    private ScheduledFuture future;
-
     /**
      * 结果等待超时值 MILLISECONDS
      */
     protected int timeout = 15000;
+    private String id;
+    private ScheduledFuture future;
 
     /**
      * 回调： RPC 返回值
@@ -54,15 +53,15 @@ public abstract class RpcResultListener {
         return this.timeout;
     }
 
-    void setId(String val) {
-        this.id = val;
-    }
-
     /**
      * @return RPC 的 ID
      */
     public String getId() {
         return this.id;
+    }
+
+    void setId(String val) {
+        this.id = val;
     }
 
 
